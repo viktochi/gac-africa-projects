@@ -8,6 +8,7 @@ from datetime import datetime, date
 import warnings
 warnings.filterwarnings('ignore', category=FutureWarning, message='.*fillna.*inplace.*')
 
+
 # Page configuration
 st.set_page_config(
     page_title="Canada-Africa Projects Analysis Dashboard",
@@ -57,7 +58,7 @@ def create_portfolio_kpis(main_df, filtered_df=None):
     df = filtered_df if filtered_df is not None else main_df
     
     total_projects = len(df)
-    total_funding = df['Maximum Contribution'].sum()
+    total_funding = country_df['Weighted_Contribution'].sum()
     avg_duration = df['Project_Duration_Years'].mean()
     entrepreneurship_projects = len(df[df['Entrepreneurship_Focus_Level'] != 'None'])
     
