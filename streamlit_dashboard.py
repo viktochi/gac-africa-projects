@@ -32,6 +32,7 @@ def load_data():
     main_df['End Date'] = pd.to_datetime(main_df['End Date'], errors='coerce')
     main_df['Start_Year'] = main_df['Start Date'].dt.year
     main_df['Maximum Contribution'] = pd.to_numeric(main_df['Maximum Contribution'], errors='coerce')
+    country_df['Weighted_Contribution'] = pd.to_numeric(country_df['Weighted_Contribution'], errors='coerce')
     
     # Handle missing values
     main_df = main_df.fillna({
@@ -52,13 +53,14 @@ main_df, country_df, sector_df = load_data()
 
 
 # Dashboard 1: Portfolio Overview Functions
-def create_portfolio_kpis(main_df, filtered_df=None):
+def create_portfolio_kpis(main_df, filtered_df=None, filtered_country_df=None):
     """Create KPI metrics for portfolio overview"""
     
     df = filtered_df if filtered_df is not None else main_df
+    country_data = filtered_country_df if filtered_country_df is not None else country_df
     
     total_projects = len(df)
-    total_funding = country_df['Weighted_Contribution'].sum()
+    total_funding = country_data['Weighted_Contribution'].sum()
     avg_duration = df['Project_Duration_Years'].mean()
     entrepreneurship_projects = len(df[df['Entrepreneurship_Focus_Level'] != 'None'])
     
@@ -616,7 +618,7 @@ def main():
         "Year Range",
         min_value=min_year,
         max_value=max_year,
-        value=(2015, max_year),
+        value=(1996, max_year),
         step=1
     )
     
@@ -656,7 +658,7 @@ def main():
         col1, col2 = st.columns(2)
         
         with col1:
-            st.plotly_chart(create_portfolio_kpis(main_df, filtered_main), use_container_width=True)
+            st.plotly_chart(create_portfolio_kpis(main_df, filtered_main, filtered_country), use_container_width=True)
         
         with col2:
             st.plotly_chart(create_country_funding_chart(filtered_country), use_container_width=True)
