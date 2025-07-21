@@ -647,7 +647,7 @@ def main():
     ]
     
     # Dashboard tabs
-    tab1, tab2, tab3 = st.tabs(["📈 Portfolio Overview", "🚀 Entrepreneurship Analysis", "⚙️ Project Management Insights"])
+    tab1, tab2, tab3 = st.tabs(["Portfolio Overview", "Entrepreneurship Analysis", "Project Management Insights"])
     
     with tab1:
         st.header("Portfolio Overview")
