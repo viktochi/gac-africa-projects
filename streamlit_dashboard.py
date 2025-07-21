@@ -60,7 +60,8 @@ def create_portfolio_kpis(main_df, filtered_df=None, filtered_country_df=None):
     country_data = filtered_country_df if filtered_country_df is not None else country_df
     
     total_projects = len(df)
-    total_funding = country_data['Weighted_Contribution'].sum()
+    total_funding = df['Maximum Contribution'].sum()
+    # total_funding = country_data['Weighted_Contribution'].sum()
     avg_duration = df['Project_Duration_Years'].mean()
     entrepreneurship_projects = len(df[df['Entrepreneurship_Focus_Level'] != 'None'])
     
@@ -618,7 +619,7 @@ def main():
         "Year Range",
         min_value=min_year,
         max_value=max_year,
-        value=(1996, max_year),
+        value=(2015, max_year),
         step=1
     )
     
