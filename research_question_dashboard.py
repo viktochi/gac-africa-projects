@@ -21,10 +21,20 @@ st.set_page_config(
 def load_data():
     """Load all CSV files and perform initial processing"""
     
-    # Read the files
-    main_df = pd.read_csv('canada_africa_projects_main.csv')
-    country_df = pd.read_csv('canada_africa_country_breakdown.csv')
-    sector_df = pd.read_csv('canada_africa_sector_breakdown.csv')
+    # Read the files (check both current directory and parent directory)
+    import os
+    
+    # Try current directory first, then parent directory
+    if os.path.exists('canada_africa_projects_main.csv'):
+        main_df = pd.read_csv('canada_africa_projects_main.csv')
+        country_df = pd.read_csv('canada_africa_country_breakdown.csv')
+        sector_df = pd.read_csv('canada_africa_sector_breakdown.csv')
+    elif os.path.exists('../canada_africa_projects_main.csv'):
+        main_df = pd.read_csv('../canada_africa_projects_main.csv')
+        country_df = pd.read_csv('../canada_africa_country_breakdown.csv')
+        sector_df = pd.read_csv('../canada_africa_sector_breakdown.csv')
+    else:
+        raise FileNotFoundError("CSV files not found. Please run analysis_main.py first.")
     
     # Clean and process main dataframe
     main_df['Start Date'] = pd.to_datetime(main_df['Start Date'], errors='coerce')
@@ -37,10 +47,32 @@ def load_data():
     for col in research_cols:
         if col in main_df.columns:
             main_df[col] = main_df[col].fillna(0)
+        else:
+            # Create missing columns with default values
+            main_df[col] = 0
+    
+    # Ensure RQ_Alignment_Level exists
+    if 'RQ_Alignment_Level' not in main_df.columns:
+        main_df['RQ_Alignment_Level'] = 'Not Aligned'
+    
+    # Ensure RQ_Alignment_Score exists
+    if 'RQ_Alignment_Score' not in main_df.columns:
+        main_df['RQ_Alignment_Score'] = 0
     
     # Process country and sector data
     country_df['Weighted_Contribution'] = pd.to_numeric(country_df['Weighted_Contribution'], errors='coerce')
     sector_df['Weighted_Contribution'] = pd.to_numeric(sector_df['Weighted_Contribution'], errors='coerce')
+    
+    # Ensure research columns exist in country and sector data
+    research_cols_country = ['Entrepreneurial_Orientation', 'Capacity_Building', 'Wealth_Creation', 'RQ_Alignment_Score']
+    for col in research_cols_country:
+        if col not in country_df.columns:
+            country_df[col] = 0
+    
+    research_cols_sector = ['Entrepreneurial_Orientation', 'Capacity_Building', 'Wealth_Creation', 'RQ_Alignment_Score']
+    for col in research_cols_sector:
+        if col not in sector_df.columns:
+            sector_df[col] = 0
     
     return main_df, country_df, sector_df
 
