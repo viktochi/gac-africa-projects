@@ -605,6 +605,7 @@ def create_geographic_network(country_df):
 # Main Streamlit App
 def main():
     st.title("🌍 Canada-Africa Projects Analysis Dashboard")
+    st.markdown("### Research Focus: *Entrepreneurial Orientation → Capacity Building → Civic Wealth Creation*")
     st.markdown("---")
     
 
@@ -630,12 +631,26 @@ def main():
         default=list(main_df['Entrepreneurship_Focus_Level'].unique())
     )
     
+    # Research Question Alignment filter (if available)
+    if 'RQ_Alignment_Level' in main_df.columns:
+        rq_alignment_levels = st.sidebar.multiselect(
+            "Research Question Alignment",
+            options=main_df['RQ_Alignment_Level'].unique(),
+            default=list(main_df['RQ_Alignment_Level'].unique())
+        )
+    else:
+        rq_alignment_levels = []
+    
     # Filter data based on selections
     filtered_main = main_df[
         (main_df['Start_Year'] >= year_range[0]) & 
         (main_df['Start_Year'] <= year_range[1]) &
         (main_df['Entrepreneurship_Focus_Level'].isin(entrepreneurship_levels))
     ]
+    
+    # Apply research alignment filter if available
+    if rq_alignment_levels and 'RQ_Alignment_Level' in main_df.columns:
+        filtered_main = filtered_main[filtered_main['RQ_Alignment_Level'].isin(rq_alignment_levels)]
     
     filtered_country = country_df[
         (country_df['Start_Year'] >= year_range[0]) & 
